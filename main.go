@@ -1,14 +1,21 @@
 package main
 
 import (
+	"log"
 	"net/http"
 )
 
 func main() {
-	multiplexer := http.NewServeMux()
+	mux := http.NewServeMux()
+	mux.Handle("/", http.FileServer(http.Dir("./static")))
+
 	server := http.Server{
 		Addr:    ":8080",
-		Handler: multiplexer,
+		Handler: mux,
 	}
-	server.ListenAndServe()
+
+	err := server.ListenAndServe()
+	if err != nil {
+		log.Fatalf("Server failed to start: %v", err)
+	}
 }
